@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://chraler.github.io/images/chart3.PNG">
 <meta property="og:image" content="https://chraler.github.io/images/chart4.PNG">
 <meta property="og:image" content="https://chraler.github.io/images/EditDistance.PNG">
-<meta property="og:updated_time" content="2018-08-17T11:35:17.930Z">
+<meta property="og:updated_time" content="2018-08-17T12:04:58.349Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C语言-Edit Distance-程序优化之路 | Chraler&#39;s Time">
 <meta name="twitter:description" content="Given two words word1 and word2, find the minimum number of operations required to convert word1 to word2. You have the following 3 operations permitted on a word: Insert a characterDelete a character">
@@ -180,13 +180,13 @@ classes that you can use:
 <p>You have the following 3 operations permitted on a word:</p>
 <p>Insert a character<br>Delete a character<br>Replace a character<br>Example 1:</p>
 <p>Input: word1 = “horse”, word2 = “ros”<br>Output: 3<br>Explanation:<br>horse -&gt; rorse (replace ‘h’ with ‘r’)<br>rorse -&gt; rose (remove ‘r’)<br>rose -&gt; ros (remove ‘e’)<br>这道题目大致要求就是求一个字符串通过几次这样增加、删减、替换三个操作转换为目标字符串。题目非常清楚，但是实际上却难住了我一段时间，刚开始我准备用递归来解决这个问题，但是后来实践上感觉效率太慢了。然后看了网上各位大神的博客，才发现有一个专门的算法叫Levenshtein距离算法（编辑距离这个概念由俄罗斯科学家Vladimir Levenshtein在1965年提出来的，所以也叫 Levenshtein 距离，用来做DNA分析，拼字检测，抄袭识别等等）。这个算法简单通过一个矩阵就得到结果，重新刷新了我的认知，更能看出算法的厉害。</p>
-<p>##算法详解<br>首先假设我们可使用d[i][j]表示将一个字符串s[1….i]转换为t[1….j]所需操作。从最简单的情况开始考虑，当其中的i为0，s为空字符串时，只需增加j次字符就可得到字符串t,d[0][j]为j，同理当字符串t为空时，只需删减i个字符，d[i][0]为i。</p>
+<h2 id="算法详解"><a href="#算法详解" class="headerlink" title="算法详解"></a>算法详解</h2><p>首先假设我们可使用d[i][j]表示将一个字符串s[1….i]转换为t[1….j]所需操作。从最简单的情况开始考虑，当其中的i为0，s为空字符串时，只需增加j次字符就可得到字符串t,d[0][j]为j，同理当字符串t为空时，只需删减i个字符，d[i][0]为i。</p>
 <p>然后我们以此来类推一般的情况，我们现在假设已经通过最少的操作使得s转换为t之差一个字符，因为有三种操作所以分为三种情况讨论：</p>
 <p>（1）m个操作内将s[1….i]转换为t[1….j-1]，这时只需增加一个字符就可满足，总的操作为m+1；</p>
 <p>（2）n个操作内将s[1….i-1]转换为t[1….j]，这时只需删减一个字符就可满足，总的操作为n+1；</p>
 <p>（3）k个操作内将s[1….i-1]转换为t[1….j-1]，这时只需替换一个字符就可满足，总的操作为k+1，当s[i] == t[j]时，则无需替换只要k个操作。</p>
 <p>所以最后我们就可得到总的最少的操作数为{m+1, n+1, (k+1)||k}中最小的一个。</p>
-<p>##实现步骤<br>（1）首先我们创建一个（x+1)*(y+1)的矩阵（其中x,y分别为两个字符串的长度），保存将一个字符串s[1….x]转换为t[1….y]所需操作数;</p>
+<h2 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h2><p>（1）首先我们创建一个（x+1)*(y+1)的矩阵（其中x,y分别为两个字符串的长度），保存将一个字符串s[1….x]转换为t[1….y]所需操作数;</p>
 <p>（2）初始化这个矩阵的第一行，第一列分别为0到x和0到y，结果如下：<br><img src="https://chraler.github.io/images/chart1.PNG" alt="image"></p>
 <p>（3）将字符串t中每一个字符与字符串s中的所有字符比较一次，假设其中字符串s第i个等于字符串t第j个字符，用tmp记为0，否则记为0。然后矩阵中d[i][j]为{d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+tmp}中最小的。<br><img src="https://chraler.github.io/images/chart2.PNG" alt="image"></p>
 <p><img src="https://chraler.github.io/images/chart3.PNG" alt="image"></p>
